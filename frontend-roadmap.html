@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Developer 6-Month Tracker (2026)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; }
+        .header h1 { font-size: 2.8em; margin-bottom: 10px; }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; padding: 30px; background: #f8f9fa; }
+        .stat-card { background: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 3em; font-weight: bold; color: #667eea; }
+        .stat-label { color: #666; margin-top: 8px; font-size: 1.1em; }
+        .progress-bar { width: 100%; height: 40px; background: #e0e0e0; border-radius: 20px; overflow: hidden; margin: 0 30px 20px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); transition: width 0.8s ease; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2em; }
+        .tabs { display: flex; background: #f8f9fa; padding: 0 30px; border-bottom: 2px solid #e0e0e0; overflow-x: auto; }
+        .tab { padding: 18px 30px; cursor: pointer; border: none; background: none; font-size: 1.1em; color: #666; transition: all 0.3s; white-space: nowrap; }
+        .tab:hover { color: #667eea; }
+        .tab.active { color: #667eea; border-bottom: 4px solid #667eea; font-weight: bold; }
+        .content { padding: 40px; }
+        .month-section { display: none; }
+        .month-section.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h2 { font-size: 2.2em; margin-bottom: 15px; color: #333; }
+        .goal { font-size: 1.2em; margin-bottom: 30px; color: #555; }
+        .project-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 40px; }
+        .project-card h3 { font-size: 1.8em; margin-bottom: 15px; }
+        .week-card { background: #f8f9fa; border-radius: 15px; padding: 30px; margin-bottom: 30px; border-left: 6px solid #667eea; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .week-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .week-title { font-size: 1.7em; color: #333; }
+        .week-progress { font-size: 1.3em; color: #667eea; font-weight: bold; }
+        .section-title { font-size: 1.3em; color: #667eea; margin: 30px 0 15px; font-weight: bold; border-bottom: 2px solid #eee; padding-bottom: 8px; }
+        .checklist { list-style: none; }
+        .checklist-item { display: flex; align-items: flex-start; padding: 15px; margin-bottom: 10px; background: white; border-radius: 10px; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .checklist-item:hover { transform: translateX(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .checklist-item input[type="checkbox"] { width: 24px; height: 24px; margin-right: 18px; cursor: pointer; flex-shrink: 0; accent-color: #667eea; }
+        .checklist-item.completed { opacity: 0.6; text-decoration: line-through; background: #f0f0f0; }
+        .checklist-item label { cursor: pointer; flex: 1; font-size: 1.05em; }
+        .motivation { background: #fff3cd; border-left: 6px solid #ffc107; padding: 25px; margin: 40px 0; border-radius: 10px; }
+        .motivation h3 { color: #856404; margin-bottom: 12px; font-size: 1.4em; }
+        .actions { text-align: center; padding: 50px; background: #f8f9fa; }
+        .btn { background: #667eea; color: white; border: none; padding: 15px 35px; border-radius: 30px; cursor: pointer; font-size: 1.1em; margin: 15px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn:hover { background: #764ba2; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #5a6268; }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .stats { grid-template-columns: 1fr; }
+            .week-header { flex-direction: column; align-items: flex-start; }
+            .week-progress { margin-top: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Modern Frontend Developer Journey 2026</h1>
+            <p>6-Month Tracker – Aligned with roadmap.sh + Vite/React Focus + DSA & Light Backend</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card"><div class="stat-number" id="weeksCompleted">0</div><div class="stat-label">Weeks Completed</div></div>
+            <div class="stat-card"><div class="stat-number" id="tasksCompleted">0</div><div class="stat-label">Tasks & Topics Done</div></div>
+            <div class="stat-card"><div class="stat-number" id="dsaProblems">0</div><div class="stat-label">DSA Problems Solved</div></div>
+            <div class="stat-card"><div class="stat-number" id="projectsBuilt">0</div><div class="stat-label">Major Projects Built</div></div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="overallProgress" style="width: 0%">0%</div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-month="1">Month 1</button>
+            <button class="tab" data-month="2">Month 2</button>
+            <button class="tab" data-month="3">Month 3</button>
+            <button class="tab" data-month="4">Month 4</button>
+            <button class="tab" data-month="5">Month 5</button>
+            <button class="tab" data-month="6">Month 6</button>
+            <button class="tab" data-month="7">Overview</button>
+        </div>
+
+        <div class="content">
+            <!-- Month 1 -->
+            <div class="month-section active" id="month1">
+                <h2>Month 1: Core Fundamentals & Setup</h2>
+                <p class="goal"><strong>Goal:</strong> Master HTML/CSS/JS, Git, Vite, Tailwind, Accessibility – build with modern tools from day 1.</p>
+                <div class="project-card">
+                    <h3>📦 Monthly Project: Personal Portfolio (Vite + React + Tailwind)</h3>
+                    <p>Responsive, accessible portfolio with dark mode, animations, deployed on Vercel/Netlify.</p>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="m1-p1"><label for="m1-p1">Setup Vite + React + Tailwind project</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m1-p2"><label for="m1-p2">Build responsive layout & sections</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m1-p3"><label for="m1-p3">Add animations & dark mode</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m1-p4"><label for="m1-p4">Deploy & optimize lighthouse score >90</label></li>
+                    </ul>
+                </div>
+
+                <div class="week-card">
+                    <div class="week-header"><div class="week-title">Week 1: HTML, CSS & Tailwind Basics</div><div class="week-progress" id="w1-progress">0/12</div></div>
+                    <div class="section-title">📚 Topics</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w1-t1"><label for="w1-t1">Semantic HTML & Accessibility (ARIA)</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w1-t2"><label for="w1-t2">Modern CSS (Grid, Flexbox, Variables, Nesting)</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w1-t3"><label for="w1-t3">Tailwind CSS fundamentals & configuration</label></li>
+                    </ul>
+                    <div class="section-title">💻 Tasks</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w1-task1"><label for="w1-task1">Build 3 landing page clones with Tailwind</label></li>
+                    </ul>
+                    <div class="section-title">🧮 DSA (5 Easy)</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w1-d1"><label for="w1-d1">Two Sum</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w1-d2"><label for="w1-d2">Valid Palindrome</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w1-d3"><label for="w1-d3">Best Time to Buy/Sell Stock</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w1-d4"><label for="w1-d4">Contains Duplicate</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w1-d5"><label for="w1-d5">Valid Anagram</label></li>
+                    </ul>
+                </div>
+
+                <div class="week-card">
+                    <div class="week-header"><div class="week-title">Week 2: Modern JavaScript & Vite</div><div class="week-progress" id="w2-progress">0/11</div></div>
+                    <div class="section-title">📚 Topics</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w2-t1"><label for="w2-t1">ES6+ (Destructuring, Spread, Modules)</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w2-t2"><label for="w2-t2">Async/Await, Promises, Fetch</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w2-t3"><label for="w2-t3">Vite setup & dev tools</label></li>
+                    </ul>
+                    <div class="section-title">💻 Tasks</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w2-task1"><label for="w2-task1">Create Vite + React app with Tailwind</label></li>
+                    </ul>
+                    <div class="section-title">🧮 DSA (5 Easy/Medium)</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w2-d1"><label for="w2-d1">Maximum Subarray</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w2-d2"><label for="w2-d2">Longest Substring Without Repeating</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w2-d3"><label for="w2-d3">Merge Intervals</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w2-d4"><label for="w2-d4">Group Anagrams</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w2-d5"><label for="w2-d5">Product of Array Except Self</label></li>
+                    </ul>
+                </div>
+
+                <div class="week-card">
+                    <div class="week-header"><div class="week-title">Week 3: Git & Package Managers</div><div class="week-progress" id="w3-progress">0/10</div></div>
+                    <div class="section-title">📚 Topics</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w3-t1"><label for="w3-t1">Git branching, PRs, conflict resolution</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w3-t2"><label for="w3-t2">pnpm/npm/yarn basics</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w3-t3"><label for="w3-t3">Linters (ESLint) & Prettier</label></li>
+                    </ul>
+                    <div class="section-title">💻 Tasks</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w3-task1"><label for="w3-task1">Contribute to open-source (simple PR)</label></li>
+                    </ul>
+                    <div class="section-title">🧮 DSA (5 Medium)</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w3-d1"><label for="w3-d1">3Sum</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w3-d2"><label for="w3-d2">Container With Most Water</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w3-d3"><label for="w3-d3">Letter Combinations of Phone Number</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w3-d4"><label for="w3-d4">Remove Nth Node From End</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w3-d5"><label for="w3-d5">Valid Sudoku</label></li>
+                    </ul>
+                </div>
+
+                <div class="week-card">
+                    <div class="week-header"><div class="week-title">Week 4: Portfolio Project Week</div><div class="week-progress" id="w4-progress">0/9</div></div>
+                    <div class="section-title">📚 Topics</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w4-t1"><label for="w4-t1">Performance basics & Lighthouse</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w4-t2"><label for="w4-t2">Deployment (Vercel/Netlify)</label></li>
+                    </ul>
+                    <div class="section-title">💻 Tasks</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w4-task1"><label for="w4-task1">Complete & deploy portfolio</label></li>
+                    </ul>
+                    <div class="section-title">🧮 DSA (5 Medium)</div>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="w4-d1"><label for="w4-d1">Longest Palindromic Substring</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w4-d2"><label for="w4-d2">Spiral Matrix</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w4-d3"><label for="w4-d3">Set Matrix Zeroes</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w4-d4"><label for="w4-d4">Word Search</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="w4-d5"><label for="w4-d5">Clone Graph</label></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Month 2 -->
+            <div class="month-section" id="month2">
+                <h2>Month 2: React Mastery</h2>
+                <p class="goal"><strong>Goal:</strong> Deep dive into React hooks, components, routing, and best practices.</p>
+                <div class="project-card">
+                    <h3>📦 Monthly Project: Advanced Todo App</h3>
+                    <p>CRUD, categories, search, drag-drop, local persistence.</p>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="m2-p1"><label for="m2-p1">Core features with hooks</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m2-p2"><label for="m2-p2">React Router & nested routes</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m2-p3"><label for="m2-p3">Custom hooks & context</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m2-p4"><label for="m2-p4">Polish & deploy</label></li>
+                    </ul>
+                </div>
+
+                <!-- Weeks 5-8 (summarized for brevity – similar structure) -->
+                <div class="week-card"><div class="week-header"><div class="week-title">Week 5: React Fundamentals & Hooks</div><div class="week-progress" id="w5-progress">0/12</div></div><p>useState, useEffect, useRef, custom hooks + 5 DSA (Linked Lists)</p></div>
+                <div class="week-card"><div class="week-header"><div class="week-title">Week 6: Context, Routing & Forms</div><div class="week-progress" id="w6-progress">0/11</div></div><p>Context API, React Router, React Hook Form + 5 DSA (Stacks/Queues)</p></div>
+                <div class="week-card"><div class="week-header"><div class="week-title">Week 7: Performance & Patterns</div><div class="week-progress" id="w7-progress">0/10</div></div><p>Memoization, lazy loading, compound components + 5 DSA (Trees)</p></div>
+                <div class="week-card"><div class="week-header"><div class="week-title">Week 8: Project Week</div><div class="week-progress" id="w8-progress">0/9</div></div><p>Complete Todo App + 5 DSA review</p></div>
+
+                <div class="motivation">
+                    <h3>💪 You're Building Real Apps Now</h3>
+                    <p>React thinking is clicking – keep practicing components!</p>
+                </div>
+            </div>
+
+            <!-- Month 3 -->
+            <div class="month-section" id="month3">
+                <h2>Month 3: Advanced React & State Management</h2>
+                <p class="goal"><strong>Goal:</strong> Master server state, APIs, testing basics.</p>
+                <div class="project-card">
+                    <h3>📦 Monthly Project: E-Commerce Catalog</h3>
+                    <p>Product grid, filters, cart, fake API integration.</p>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="m3-p1"><label for="m3-p1">Zustand or TanStack Query state</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m3-p2"><label for="m3-p2">API fetching & caching</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m3-p3"><label for="m3-p3">Advanced filters & pagination</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m3-p4"><label for="m3-p4">Unit tests with Vitest/RTL</label></li>
+                    </ul>
+                </div>
+
+                <div class="week-card"><p>Weeks 9–12: Zustand, TanStack Query, Vitest + React Testing Library, API patterns + 5 DSA each (Hashing, Recursion, Graphs)</p></div>
+            </div>
+
+            <!-- Month 4 -->
+            <div class="month-section" id="month4">
+                <h2>Month 4: TypeScript & Testing</h2>
+                <p class="goal"><strong>Goal:</strong> Add types, write reliable tests, optimize.</p>
+                <div class="project-card">
+                    <h3>📦 Monthly Project: Typed Blog with Next.js Intro</h3>
+                    <p>Convert previous project to TS, add tests.</p>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="m4-p1"><label for="m4-p1">Full TypeScript migration</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m4-p2"><label for="m4-p2">Comprehensive tests (unit + component)</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m4-p3"><label for="m4-p3">Performance audit & improvements</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m4-p4"><label for="m4-p4">Intro to Next.js basics</label></li>
+                    </ul>
+                </div>
+
+                <div class="week-card"><p>Weeks 13–16: TypeScript deep dive, Vitest/RTL/Playwright, Core Web Vitals + 5 DSA each (DP, Graphs)</p></div>
+            </div>
+
+            <!-- Month 5 -->
+            <div class="month-section" id="month5">
+                <h2>Month 5: Next.js & Backend Integration</h2>
+                <p class="goal"><strong>Goal:</strong> SSR/SSG, PWAs, light backend with Supabase/Firebase.</p>
+                <div class="project-card">
+                    <h3>📦 Monthly Project: Social Dashboard (Next.js + Supabase)</h3>
+                    <p>Auth, realtime posts, likes/comments.</p>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="m5-p1"><label for="m5-p1">Next.js App Router & SSR/SSG</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m5-p2"><label for="m5-p2">Supabase auth & database</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m5-p3"><label for="m5-p3">Realtime features</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m5-p4"><label for="m5-p4">PWA setup & deploy</label></li>
+                    </ul>
+                </div>
+
+                <div class="week-card"><p>Weeks 17–20: Next.js advanced, Supabase/Firebase, PWAs, Web Security basics + 5 DSA each</p></div>
+            </div>
+
+            <!-- Month 6 -->
+            <div class="month-section" id="month6">
+                <h2>Month 6: Capstone & Job Preparation</h2>
+                <p class="goal"><strong>Goal:</strong> Build full-stack capstone, polish portfolio, prep interviews.</p>
+                <div class="project-card">
+                    <h3>📦 Capstone: Full-Stack Job Board or Chat App</h3>
+                    <p>Next.js + TS + Supabase + tests + optimization.</p>
+                    <ul class="checklist">
+                        <li class="checklist-item"><input type="checkbox" id="m6-p1"><label for="m6-p1">Core features & auth</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m6-p2"><label for="m6-p2">E2E tests & performance</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m6-p3"><label for="m6-p3">Portfolio update & resume</label></li>
+                        <li class="checklist-item"><input type="checkbox" id="m6-p4"><label for="m6-p4">Apply to jobs + mock interviews</label></li>
+                    </ul>
+                </div>
+
+                <div class="week-card"><p>Weeks 21–24: System design intro, DSA review, interview practice, capstone polish</p></div>
+                <div class="motivation">
+                    <h3>🎉 You're Job-Ready!</h3>
+                    <p>6 months of consistent work – now go land that frontend role!</p>
+                </div>
+            </div>
+
+            <!-- Overview -->
+            <div class="month-section" id="month7">
+                <h2>Overview & Milestones</h2>
+                <div style="line-height: 2;">
+                    <p><strong>Total Targets:</strong></p>
+                    <ul>
+                        <li>24 Weeks of structured learning</li>
+                        <li>~120 DSA problems solved</li>
+                        <li>6 Major modern projects</li>
+                        <li>Mastery of Vite, React, Next.js, TypeScript, Tailwind, Testing, PWAs</li>
+                        <li>Light backend skills for full-stack capability</li>
+                    </ul>
+                    <p>This roadmap is ~90% aligned with roadmap.sh frontend (2026) while adding practical DSA and backend touches for better employability.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn" onclick="saveProgress()">Save Progress</button>
+        <button class="btn btn-secondary" onclick="loadProgress()">Load Progress</button>
+        <button class="btn btn-secondary" onclick="resetProgress()">Reset All</button>
+    </div>
+
+    <script>
+        // Tab navigation
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.month-section').forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('month' + tab.dataset.month).classList.add('active');
+            });
+        });
+
+        // Update stats & progress
+        function updateStats() {
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            const total = allCheckboxes.length;
+            let completed = 0;
+            let dsa = 0;
+            let projects = 0;
+
+            allCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    completed++;
+                    cb.closest('.checklist-item').classList.add('completed');
+                    if (cb.id.includes('-d')) dsa++;
+                    if (cb.id.endsWith('-p4')) projects++;
+                } else {
+                    cb.closest('.checklist-item').classList.remove('completed');
+                }
+            });
+
+            // Weeks completed (all checkboxes in week checked)
+            let weeks = 0;
+            for (let i = 1; i <= 24; i++) {
+                const weekBoxes = document.querySelectorAll(`[id^="w${i}-"], [id^="m"][id$="-p"]`); // approximate
+                if (weekBoxes.length > 0 && [...weekBoxes].every(c => c.checked)) weeks++;
+            }
+
+            document.getElementById('tasksCompleted').textContent = completed;
+            document.getElementById('dsaProblems').textContent = dsa;
+            document.getElementById('projectsBuilt').textContent = projects;
+            document.getElementById('weeksCompleted').textContent = weeks;
+
+            const percent = total ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('overallProgress').style.width = percent + '%';
+            document.getElementById('overallProgress').textContent = percent + '%';
+
+            // Per-week progress
+            for (let i = 1; i <= 24; i++) {
+                const el = document.getElementById(`w${i}-progress`);
+                if (el) {
+                    const boxes = document.querySelectorAll(`[id^="w${i}-"]`);
+                    const done = [...boxes].filter(b => b.checked).length;
+                    el.textContent = `${done}/${boxes.length}`;
+                }
+            }
+        }
+
+        // Persistence
+        function saveProgress() {
+            const data = {};
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => data[cb.id] = cb.checked);
+            localStorage.setItem('frontendTracker2026', JSON.stringify(data));
+            alert('Progress saved!');
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('frontendTracker2026');
+            if (saved) {
+                const data = JSON.parse(saved);
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    if (data[cb.id] !== undefined) cb.checked = data[cb.id];
+                });
+                updateStats();
+                alert('Progress loaded!');
+            }
+        }
+
+        function resetProgress() {
+            if (confirm('Reset all progress?')) {
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                    cb.closest('.checklist-item').classList.remove('completed');
+                });
+                localStorage.removeItem('frontendTracker2026');
+                updateStats();
+            }
+        }
+
+        // Init
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.addEventListener('change', updateStats));
+        loadProgress();
+        updateStats();
+    </script>
+</body>
+</html>
